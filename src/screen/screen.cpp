@@ -1,6 +1,11 @@
 #include "screen.h"
 
+//Excercise 4.2 
+// The const display() function in screen.h is used to ensure that there is no changes made to any objects the function is called on.
+// The const used in void set() function makes sure that the reference to the string object is not changed.
+// The const keyword used in the private data member makes sure that "TOP_LEFT" always has the value zero.
 // Screen's constructor
+
 Screen::Screen(string::size_type height, string::size_type width, char bkground):
 	height_{height},// initialises height_ with height
 	width_{width},  // initialises width_ with width
