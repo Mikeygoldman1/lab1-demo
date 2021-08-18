@@ -69,6 +69,40 @@ void Screen::move( string::size_type row, string::size_type col )
 
 	return;
 }
+ 
+ 
+void Screen::move(Direction dir )
+{   // move cursor_ to absolute position
+	// valid screen position?
+	if ( dir == Direction::HOME)
+	{
+	Screen::home();
+	}
+	else if ( dir ==Direction::FORWARD)
+	{
+	Screen::forward();
+	}
+	else if (dir ==Direction::BACK)
+	{
+	Screen::back();
+	}
+	else if (dir == Direction::UP)
+	{
+	Screen::up();
+	}
+	else if (dir == Direction::DOWN)
+	{
+	Screen::down();
+	}
+	else if (dir == Direction::END)
+	{
+	Screen::end();
+	}
+
+	return;
+}
+// This member function is not a necessity as clients can also use the existing functionality that effectively does the same thing.However using an enumeration makes it easier
+
 
 char Screen::get( string::size_type row, string::size_type col )
 {
