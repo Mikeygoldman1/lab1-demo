@@ -224,7 +224,40 @@ string::size_type Screen::remainingSpace() const
 }
 
 string::size_type Screen::row() const
-{   // return current row
-	return (cursor_ + width_)/width_;
+// You can use the existing interface as it has all the functions needed to implement a square. This function does not form part of the responsibilities of a Screen object as this function can be performed using the existing member functions in the Screen class. A function of this type creates a shortcut and does not introduce any new operations.
+void Screen::square(string::size_type row, string::size_type col, string::size_type length)
+{
+	clear(' ');
+	move(row, col);
+	int x = height_ - row;
+	int y = width_ - col;
+	if (length<=x+1 && length <=y+1)
+	{
+		set('X');
+		for (int i = 0; i < length - 1; i++)
+		{
+			down();
+			set('X');
+		}
+		for (int j = 0; j < length - 1; j++)
+		{
+			forward();
+			set('X');
+		}
+		for (int z = 0; z < length - 1; z++)
+		{
+			up();
+			set('X');
+		}
+		for (int p = 0; p < length - 1; p++)
+		{
+			back();
+			set('X');
+		}
+		display();
+	}
+	else
+	{
+		cout << "Out of bounds";
+	}
 }
-
