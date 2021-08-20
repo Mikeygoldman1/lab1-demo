@@ -37,6 +37,11 @@ public:
 	// move the cursor to the specified row and column
 	void move(string::size_type row, string::size_type col);
 
+   enum class Direction {HOME,FORWARD,BACK,UP,DOWN,END};
+	
+	void move(Direction dir);
+	
+
 	// get the character at the cursor's current position
 	char get() const { return _screen[cursor_]; }
 	// get the character at the specified row and column
@@ -55,6 +60,8 @@ public:
 	void display() const;
 	// check whether the specified co-ordinates lie within the screen
 	bool checkRange(string::size_type row, string::size_type col) const;
+
+	void square(string::size_type row, string::size_type col,string::size_type length);
 
 private:
 	// constants
