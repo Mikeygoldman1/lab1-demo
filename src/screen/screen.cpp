@@ -1,33 +1,37 @@
 #include "screen.h"
 
-//Excercise 4.2 
+//Excercise 4.2
 // The const display() function in screen.h is used to ensure that there is no changes made to any objects the function is called on.
 // The const used in void set() function makes sure that the reference to the string object is not changed.
 // The const keyword used in the private data member makes sure that "TOP_LEFT" always has the value zero.
+// The at memeber function provides a reference to the character with a specified index in a string 
 // Screen's constructor
-
-Screen::Screen(string::size_type height, string::size_type width, char bkground):
-	height_{height},// initialises height_ with height
-	width_{width},  // initialises width_ with width
-	_screen(height * width, bkground)	// size of _screen is height * width
-										// all positions initialized with
-										// character value of bkground
-{ /* all the work is done in the member initialization list */ }
+// 
+//Exercise 4.6 
+// I think a more intuitive internal representation is of type vector. It works very well with dynamic elements and is therefore, easy to resize.
+Screen::Screen(string::size_type height, string::size_type width, char bkground) : height_{height},					 // initialises height_ with height
+																				   width_{width},					 // initialises width_ with width
+																				   _screen(height * width, bkground) // size of _screen is height * width
+																													 // all positions initialized with
+																													 // character value of bkground
+{																													 /* all the work is done in the member initialization list */
+}
 
 void Screen::forward()
-{   // advance cursor_ one screen element
+{ // advance cursor_ one screen element
 	++cursor_;
 
 	// wrap around if the cursor_ is at the end of the screen
-	if ( cursor_ == _screen.size()) home();
+	if (cursor_ == _screen.size())
+		home();
 
 	return;
 }
 
 void Screen::back()
-{   // move cursor_ backward one screen element
+{ // move cursor_ backward one screen element
 	// check for top of screen; wrap around
-	if ( cursor_ == TOP_LEFT )
+	if (cursor_ == TOP_LEFT)
 		end();
 	else
 		--cursor_;
@@ -54,7 +58,7 @@ void Screen::up()
 }
 
 void Screen::down()
-{   // move cursor_ down one row of screen
+{ // move cursor_ down one row of screen
 	// do not wrap around
 	if (row()==height_) // at bottom?
 	{
@@ -70,121 +74,121 @@ void Screen::down()
 	return;
 }
 
-void Screen::move( string::size_type row, string::size_type col )
-{   // move cursor_ to absolute position
+void Screen::move(string::size_type row, string::size_type col)
+{ // move cursor_ to absolute position
 	// valid screen position?
-	if ( checkRange( row, col ) )
+	if (checkRange(row, col))
 	{
 		// row location
-		auto row_loc = (row-1) * width_;
+		auto row_loc = (row - 1) * width_;
 		cursor_ = row_loc + col - 1;
 	}
 
 	return;
 }
- 
- 
-void Screen::move(Direction dir )
-{   // move cursor_ to absolute position
+
+void Screen::move(Direction dir)
+{ // move cursor_ to absolute position
 	// valid screen position?
-	if ( dir == Direction::HOME)
+	if (dir == Direction::HOME)
 	{
-	Screen::home();
+		Screen::home();
 	}
-	else if ( dir ==Direction::FORWARD)
+	else if (dir == Direction::FORWARD)
 	{
-	Screen::forward();
+		Screen::forward();
 	}
-	else if (dir ==Direction::BACK)
+	else if (dir == Direction::BACK)
 	{
-	Screen::back();
+		Screen::back();
 	}
 	else if (dir == Direction::UP)
 	{
-	Screen::up();
+		Screen::up();
 	}
 	else if (dir == Direction::DOWN)
 	{
-	Screen::down();
+		Screen::down();
 	}
 	else if (dir == Direction::END)
 	{
-	Screen::end();
+		Screen::end();
 	}
 
 	return;
 }
 // This member function is not a necessity as clients can also use the existing functionality that effectively does the same thing.However using an enumeration makes it easier
 
-
-char Screen::get( string::size_type row, string::size_type col )
+char Screen::get(string::size_type row, string::size_type col)
 {
 	// position cursor_
-	move( row, col );
+	move(row, col);
 	// the other get() member function
 	return get();
 }
 
-void Screen::set( char ch )
+void Screen::set(char ch)
 {
-	if ( ch == '\0' )
-		cerr << "Screen::set warning: " << "null character (ignored).\n";
-	else _screen[cursor_] = ch;
+	if (ch == '\0')
+		cerr << "Screen::set warning: "
+			 << "null character (ignored).\n";
+	else
+		_screen[cursor_] = ch;
 
 	return;
 }
 
-void Screen::set( const string& s )
-{   // write string beginning at current cursor_ position
+void Screen::set(const string &s)
+{ // write string beginning at current cursor_ position
 	auto space = remainingSpace();
 	auto len = s.size();
-	if ( space < len ) {
+	if (space < len)
+	{
 		cerr << "Screen::set - Truncating, "
-			<< "space available: " << space
-			<< ", string length: " << len
-			<< endl;
+			 << "space available: " << space
+			 << ", string length: " << len
+			 << endl;
 		len = space;
 	}
 
-	_screen.replace( cursor_, len, s );
+	_screen.replace(cursor_, len, s);
 	cursor_ += len - 1;
 
 	return;
 }
 
-void Screen::clear( char bkground )
-{   // reset the cursor and clear the screen
+void Screen::clear(char bkground)
+{ // reset the cursor and clear the screen
 	cursor_ = TOP_LEFT;
 	// assign the string
 	_screen.assign(
 		// with size() characters
 		_screen.size(),
 		// of value bkground
-		bkground
-		);
+		bkground);
 
 	return;
 }
-
-void Screen::reSize( string::size_type h, string::size_type w, char bkground )
-{   // can only *increase* a screen's size to height h and width w
+// The string class's size_type represents the number of elements in a string.
+void Screen::reSize(string::size_type h, string::size_type w, char bkground)
+{ // can only *increase* a screen's size to height h and width w
 	// remember the content of the screen
 	string local{_screen};
 	auto local_pos = TOP_LEFT;
 
 	// replaces the string to which _screen refers
-	_screen.assign(      // assign the string
-		h * w,           // with h * w characters
-		bkground         // of value bkground
-		);
+	_screen.assign( // assign the string
+		h * w,		// with h * w characters
+		bkground	// of value bkground
+	);
 
 	// copy content of old screen into the new one
-	for ( string::size_type ix = 0; ix < height_; ++ix )
-	{ // for each row
+	for (string::size_type ix = 0; ix < height_; ++ix)
+	{									   // for each row
 		string::size_type offset = w * ix; // row position
-		for ( string::size_type iy = 0; iy < width_; ++iy )
+		for (string::size_type iy = 0; iy < width_; ++iy)
 			// for each column, assign the old value
-			_screen.at(offset + iy) = local[ local_pos++ ];
+			_screen.at(offset + iy) = local[local_pos++];
 	}
 
 	height_ = h;
@@ -196,34 +200,37 @@ void Screen::reSize( string::size_type h, string::size_type w, char bkground )
 
 void Screen::display() const
 {
-	for ( string::size_type ix = 0; ix < height_; ++ix )
-	{ // for each row
+	for (string::size_type ix = 0; ix < height_; ++ix)
+	{											// for each row
 		string::size_type offset = width_ * ix; // row position
-		for ( string::size_type iy = 0; iy < width_; ++iy )
+		for (string::size_type iy = 0; iy < width_; ++iy)
 			// for each column, write element
-			cout << _screen[ offset + iy ];
+			cout << _screen[offset + iy];
 		cout << endl;
 	}
 	return;
 }
 
-bool Screen::checkRange( string::size_type row, string::size_type col ) const
-{   // validate coordinates
+bool Screen::checkRange(string::size_type row, string::size_type col) const
+{ // validate coordinates
 	if (row < 1 || row > height_ || col < 1 || col > width_)
 	{
-		cerr << "Screen coordinates ("<< row << ", " << col << " ) out of bounds.\n";
+		cerr << "Screen coordinates (" << row << ", " << col << " ) out of bounds.\n";
 		return false;
 	}
 	return true;
 }
 
 string::size_type Screen::remainingSpace() const
-{   // includes current position
+{ // includes current position
 	auto size = width_ * height_;
-	return(size - cursor_);
+	return (size - cursor_);
 }
 
 string::size_type Screen::row() const
+{ // return current row
+	return (cursor_ + width_) / width_;
+}
 // You can use the existing interface as it has all the functions needed to implement a square. This function does not form part of the responsibilities of a Screen object as this function can be performed using the existing member functions in the Screen class. A function of this type creates a shortcut and does not introduce any new operations.
 void Screen::square(string::size_type row, string::size_type col, string::size_type length)
 {
